@@ -1,47 +1,56 @@
-function colorChange(box) {
-  box.count = 0;
+function addRandomColor(box) {
+  box.addEventListener("mouseenter", () => {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    box.style.backgroundColor = `rgba(${r}, ${g}, ${b})`;
+  }, { once: true});
+}
+
+function addDarken(box) {
+  box.style.opacity = 1.1;
   box.addEventListener("mouseenter", function x() {
-    if (box.count === 0) {
-      var r = Math.floor(Math.random() * 255);
-      var g = Math.floor(Math.random() * 255);
-      var b = Math.floor(Math.random() * 255);
-      box.style.backgroundColor = `rgba(${r}, ${g}, ${b})`;
-      box.style.opacity = 1;
-    }
-    else {
-      box.style.opacity -= 0.1;
-      if (box.count === 10) box.removeEventListener("mouseenter", x);
-    }
-    box.count ++;
+    box.style.opacity -= 0.1;
+    if (box.style.opacity <= 0) box.removeEventListener("mouseenter", x);
   });
 }
 
-function generateGrid() {
-  if (initialGeneration === false) {
-    gridSize = +prompt("Specify grid size (0-50)");
-    while (gridSize <= 0 || gridSize > 50 || Number.isNaN(gridSize)) {
-      gridSize = +prompt("Invalid input. Specify grid size (0-50)");
-    }
+function clearGrid() {
+  container.innerHTML = "";
+}
+
+function getUserInput() {
+  let userInput = +prompt("Specify grid size (1-100)");
+  while (userInput <= 0 || userInput > 100 || Number.isNaN(userInput)) {
+    userInput = +prompt("Invalid input. Specify grid size (1-100)");
   }
-  while (container.hasChildNodes()) container.removeChild(container.firstChild);
-  for (let i = 0; i < gridSize * gridSize; i++) {
-    const box = document.createElement("div");
-    const size = container.offsetHeight / gridSize;
-    box.style.width = size + "px";
-    box.style.height = size + "px";
-    box.style.backgroundColor = "white";
-    colorChange(box);
-    container.appendChild(box);
+  return userInput;
+}
+
+function loadGrid() {
+  if (initialLoad === false) {
+    gridSize = getUserInput();
+    clearGrid();
+  }
+  for (let i = 0; i < gridSize; i++) {
+    const row = document.createElement("div");
+    row.classList.add("row");
+    for (let j = 0; j < gridSize; j++) {
+      const box = document.createElement("div");
+      box.classList.add("box");
+      addRandomColor(box);
+      addDarken(box);
+      row.appendChild(box);
+    }
+    container.appendChild(row);
   }
 }
 
-let initialGeneration = true;
+let initialLoad = true;
 let gridSize = 16;
-const gridButton = document.querySelector("button");
-gridButton.addEventListener("click", generateGrid);
+let prevGridSize = 0;
 const container = document.querySelector(".container");
-container.style.width = window.innerHeight - gridButton.offsetHeight - 40 + "px";
-container.style.height = window.innerHeight - gridButton.offsetHeight - 40 + "px";
-container.style.backgroundColor = "black";
+const gridButton = document.querySelector("button");
+gridButton.addEventListener("click", loadGrid);
 gridButton.click();
-initialGeneration = false;
+initialLoad = false;
