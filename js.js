@@ -1,4 +1,4 @@
-function addRandomColor(box) {
+function addRandomColorEL(box) {
   box.addEventListener("mouseenter", () => {
     const r = Math.floor(Math.random() * 255);
     const g = Math.floor(Math.random() * 255);
@@ -7,16 +7,12 @@ function addRandomColor(box) {
   }, { once: true});
 }
 
-function addDarken(box) {
+function addLowerOpacityEL(box) {
   box.style.opacity = 1.1;
-  box.addEventListener("mouseenter", function x() {
+  box.addEventListener("mouseenter", function lowerOpacity() {
     box.style.opacity -= 0.1;
-    if (box.style.opacity <= 0) box.removeEventListener("mouseenter", x);
+    if (box.style.opacity <= 0) box.removeEventListener("mouseenter", lowerOpacity);
   });
-}
-
-function clearGrid() {
-  container.innerHTML = "";
 }
 
 function getUserInput() {
@@ -30,7 +26,7 @@ function getUserInput() {
 function loadGrid() {
   if (initialLoad === false) {
     gridSize = getUserInput();
-    clearGrid();
+    container.innerHTML = "";
   }
   for (let i = 0; i < gridSize; i++) {
     const row = document.createElement("div");
@@ -38,8 +34,8 @@ function loadGrid() {
     for (let j = 0; j < gridSize; j++) {
       const box = document.createElement("div");
       box.classList.add("box");
-      addRandomColor(box);
-      addDarken(box);
+      addRandomColorEL(box);
+      addLowerOpacityEL(box);
       row.appendChild(box);
     }
     container.appendChild(row);
@@ -48,7 +44,6 @@ function loadGrid() {
 
 let initialLoad = true;
 let gridSize = 16;
-let prevGridSize = 0;
 const container = document.querySelector(".container");
 const gridButton = document.querySelector("button");
 gridButton.addEventListener("click", loadGrid);
